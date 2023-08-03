@@ -1,0 +1,26 @@
+Task 8
+
+ //////////////Task 8 a)/////////////////////////////////////////////////
+        <?php
+
+        //writes the data to function it is called after the _toString method
+        function writeToFile($record) {
+            $file = fopen('fullrecords.txt', 'ab');
+            fwrite($file, $record . "\n");
+            fclose($file);
+            readFileRecords();
+        }
+        ?>
+
+///////////////////////////////////Task 8 b)////////////////////////////
+        <?php
+
+        //reads values from file and echos to browser
+        function readFileRecords() {
+            $values = file('fullrecords.txt');
+            foreach ($values as $value) {
+                echo '<div>' . $value . '</div>';
+            }
+        }
+        ?>
+

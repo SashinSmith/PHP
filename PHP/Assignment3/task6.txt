@@ -1,0 +1,192 @@
+<!-- Task 6 --!>
+
+<?php
+        //gets the value for the radio button
+        $choice = filter_input(INPUT_POST, 'selectR');
+
+        //switch statement to run the specific function for selected value
+        switch ($choice) {
+            case 'n1':
+                orderByS();
+                break;
+            case 'n2':
+                likeS();
+                break;
+            case 'n3':
+                injoinS();
+                break;
+            case 'n4':
+                wherOrS();
+                break;
+            case 'n5':
+                maxS();
+                break;
+            default:
+                echo 'Error';
+        }
+
+        /////////////////////////////Number 1///////////////////////////////////
+        //orders the values
+        function orderByS() {
+            echo 'n1';
+            global $db;
+            $query = "SELECT * FROM filmtitles ORDER BY FilmDuration";
+            $statement = $db->prepare($query);
+            $statement->execute();
+            ?>
+            <section>
+                <h1>FilmTitles</h1>
+                <!-- TABLE CONSTRUCTION -->
+                <table>
+                    <tr>
+                        <th>FilmTitleID</th>
+                        <th>FilmTitle</th>
+                        <th>FilmDuration</th>
+                        <th>FilmStory</th>
+                    </tr>
+                    <!-- Gets the rows -->
+                    <?php
+                    // loops until end of all data
+                    while ($rows = $statement->fetch()) {
+                        ?>
+                        <tr>
+                            <!-- fetches all rows -->
+                            <td><?php echo $rows['FilmTitleID']; ?></td>
+                            <td><?php echo $rows['FilmTitle']; ?></td>
+                            <td><?php echo $rows['FilmDuration']; ?></td>
+                            <td><?php echo $rows['FilmStory']; ?></td>
+                        </tr>
+                        <?php
+                    }
+                    $statement->closeCursor();
+                    ?>
+                </table>
+                <?php
+            }
+
+            //////////////////////Number 2//////////////////////////////////////
+            //the like section
+            function likeS() {
+                echo 'n2';
+                global $db;
+                $query = "SELECT * FROM roletypes WHERE RoleTypeID LIKE 'WM'";
+                $statement = $db->prepare($query);
+                $statement->execute();
+                ?>
+                <section>
+                    <h1>RoleTypes</h1>
+                    <!-- TABLE CONSTRUCTION -->
+                    <table>
+                        <tr>
+                            <th>RoleTypeID</th>
+                            <th>RoleType</th>
+                        </tr>
+                        <!-- Gets the rows -->
+                        <?php
+                        // loops until end of all data
+                        while ($rows = $statement->fetch()) {
+                            ?>
+                            <tr>
+                                <!-- fetches all rows -->
+                                <td><?php echo $rows['RoleTypeID']; ?></td>
+                                <td><?php echo $rows['RoleType']; ?></td>
+                            </tr>
+                            <?php
+                        }
+                        $statement->closeCursor();
+                        ?>
+                    </table>
+                    <?php
+                }
+
+                ////////////////////////////Number 3////////////////////////////
+                function injoinS() {
+                    echo 'n3';
+                    global $db;
+                    //joins the actors table to filmactors to display actors name and character name
+                    $query = "SELECT ActorFullName, CharacterName 
+                            FROM filmactorroles 
+                            INNER JOIN actors 
+                            ON filmactorroles.ActorID = actors.ActorID";
+                    $statement = $db->prepare($query);
+                    $statement->execute();
+                    ?>
+                    <section>
+                        <h1>Joined Table</h1>
+                        <!-- TABLE CONSTRUCTION -->
+                        <table>
+                            <tr>
+                                <th>ActorFullName</th>
+                                <th>CharacterName</th>
+                            </tr>
+                            <!-- Gets the rows -->
+                            <?php
+                            // loops until end of all data
+                            while ($rows = $statement->fetch()) {
+                                ?>
+                                <tr>
+                                    <!-- fetches all rows -->
+                                    <td><?php echo $rows['ActorFullName']; ?></td>
+                                    <td><?php echo $rows['CharacterName']; ?></td>
+                                </tr>
+                                <?php
+                            }
+                            $statement->closeCursor();
+                            ?>
+                        </table>
+                        <?php
+                    }
+
+                    /////////////////////Number 4///////////////////////////////
+                    //uses a where and or to match two values from the db
+                    function wherOrS() {
+                        echo 'n4';
+                        global $db;
+                        $query = "SELECT * FROM roletypes WHERE RoleType LIKE 'Hero' OR RoleTypeID LIKE '%3%'";
+                        $statement = $db->prepare($query);
+                        $statement->execute();
+                        ?>
+                        <section>
+                            <h1>WHEREOR</h1>
+                            <!-- TABLE CONSTRUCTION -->
+                            <table>
+                                <tr>
+                                    <th>RoleTypeID</th>
+                                    <th>RoleType</th>
+                                </tr>
+                                <!-- Gets the rows -->
+                                <?php
+                                // loops until end of all data
+                                while ($rows = $statement->fetch()) {
+                                    ?>
+                                    <tr>
+                                        <!-- fetches all rows -->
+                                        <td><?php echo $rows['RoleTypeID']; ?></td>
+                                        <td><?php echo $rows['RoleType']; ?></td>
+                                    </tr>
+                                    <?php
+                                }
+                                $statement->closeCursor();
+                                ?>
+                            </table>
+                            <?php
+                        }
+
+                        /////////////////////Number 5///////////////////////////
+                        //gets the maximum of the duration columb
+                        function maxS() {
+                            echo 'n5';
+                            global $db;
+                            $longest=array();
+                            $query = "SELECT  MAX(FilmDuration) FROM filmtitles";
+                            $statement = $db->prepare($query);
+                            $statement->execute();
+                            //return array of max values
+                            $longest = $statement->fetch();
+                            echo "<br>";
+                            //only need the first max value
+                            print_r('The longest duration is '. $longest[0]);
+
+                            $statement->closeCursor();
+                        }
+                        ?>
